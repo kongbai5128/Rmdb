@@ -1,0 +1,3 @@
+/home/qian/DB/db2025/rmdb/rmdb_client/build/CMakeFiles/rmdb_client.dir
+/home/qian/DB/db2025/rmdb/rmdb_client/build/CMakeFiles/edit_cache.dir
+/home/qian/DB/db2025/rmdb/rmdb_client/build/CMakeFiles/rebuild_cache.dir

@@ -42,8 +42,8 @@ void DiskManager::write_page(int fd, page_id_t page_no, const char *offset, int 
         throw std::runtime_error("DiskManager::write_page lseek Error");
     }
     // 使用 write() 将数据写入到指定的页面位置
-    ssize_t bytes_read=write(fd,offset,num_bytes);
-    if(bytes_read!=num_bytes)
+    ssize_t bytes_write=write(fd,offset,num_bytes);
+    if(bytes_write!=num_bytes)
     {
         // 如果写入的字节数与预期不符，抛出异常
         throw std::runtime_error("DiskManager::write_page Error");
@@ -140,7 +140,7 @@ void DiskManager::create_file(const std::string &path) {
     //0666 权限 这里设置为所有用户可读写
     //path.c_str()是 C++ 标准库 std::string 类型的一个成员函数，
     //作用是返回一个指向当前字符串内容的 C 风格字符串指针（即 const char* 类型）。
-    int fd=open(path.c_str(), O_CREAT | O_RDWR,0666);
+    int fd = open(path.c_str(), O_CREAT | O_EXCL | O_RDWR, 0666);
     if(fd==-1)
     {
         throw std::runtime_error("DiskManager::create_file Error: Unable to create file");
@@ -182,7 +182,7 @@ int DiskManager::open_file(const std::string &path) {
     // 注意不能重复打开相同文件，并且需要更新文件打开列表
     // 判断是否已经打开
     if (path2fd_.count(path)) {
-        throw std::runtime_error("DiskManager::open_file Error: File already opened");
+        return path2fd_[path];
     }
     // 使用open()函数，O_CREAT | O_EXCL 确保不会覆盖已存在文件，O_RDWR 读写权限
     //0666 权限 这里设置为所有用户可读写
@@ -211,7 +211,7 @@ void DiskManager::close_file(int fd) {
     if (!fd2path_.count(fd)) {
         throw std::runtime_error("DiskManager::close_file Error: File already closed");
     }
-    std::string path = get_file_name(fd);
+    std::string path = fd2path_[fd]; // 直接访问映射关系
     if(close(fd)==-1)
     {
         throw std::runtime_error("DiskManager::close_file Error: Unable to close file");
