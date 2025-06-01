@@ -29,7 +29,7 @@ bool LRUReplacer::victim(frame_id_t* frame_id) {
     if( LRUlist_.empty()) {
         return false;
     }
-    frame_id = &LRUlist.back();
+    *frame_id = LRUlist_.back();
     LRUlist_.pop_back();
     LRUhash_.erase(*frame_id);
     return true;
